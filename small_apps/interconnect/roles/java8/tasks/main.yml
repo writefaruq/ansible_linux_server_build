@@ -1,0 +1,8 @@
+---
+- name: Add Oracle Java RPM channels
+  command: /usr/sbin/rhn-channel --add --channel=rhel-x86_64-server-6-thirdparty-oracle-java --user={{ rhn_user }} --password={{ rhn_password }} 
+  
+- name: Install JRE 8.x
+  yum: name=java-1.8.0-oracle state=installed
+    
+    

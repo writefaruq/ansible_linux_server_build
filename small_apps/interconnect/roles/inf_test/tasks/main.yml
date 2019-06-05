@@ -1,0 +1,10 @@
+---
+- name: Download test dataset
+  get_url: url=http://wiki.obiba.org/download/attachments/23920726/LifeLines.sav?version=3&modificationDate=1374072365000&api=v2 dest=/tmp/LifeLines.sav
+
+- name: Create a MongoDB database opal_ids
+  mongodb_user: database=opal_ids name={{ item }} state=present password={{ mongodb_opal_user_pass }}
+  with_items:
+    - opal_ids
+    - opal_data
+

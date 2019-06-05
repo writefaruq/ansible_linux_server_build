@@ -1,0 +1,4 @@
+---
+csr_path: /etc/pki/tls/csr
+private_key_path:  /etc/pki/tls/private/localhost.key
+#- cert_common_name:

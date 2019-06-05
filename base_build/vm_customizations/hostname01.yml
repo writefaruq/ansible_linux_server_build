@@ -1,0 +1,14 @@
+---
+- hosts: hostname01
+
+  tasks:
+    - name: Install Python 2.7 and other packages
+      yum: name={{ item }} state=installed
+      with_items:
+       - python27
+       - R
+      tags: pkg_install
+
+    - name: Add the role group
+      lineinfile: dest=/etc/login.group.allowed line="{{ extra_ad_group }}" state=present insertafter="{{ admin_ad_group }}"
+      tags: add_role_group

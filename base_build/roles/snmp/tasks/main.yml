@@ -1,0 +1,30 @@
+---
+- name: Install snmp packages
+  yum: name={{ item }} state=installed
+  with_items:
+    - net-snmp 
+    - net-snmp-utils
+    - net-snmp-perl 
+    - net-snmp-python
+  notify:
+    - restart snmpd
+  tags: snmp_install
+  register: snmp_installed
+ 
+- name: Copy the snmpd config file
+  template: src=snmpd.conf.j2 dest=/etc/snmp/snmpd.conf force=yes
+  tags: snmp_conf
+  register: snmp_conf_copied
+  when: snmp_installed
+
+
+- name: Apply SELinux restote cone
+  command: /sbin/restorecon -R /etc/snmp/
+  when: conf_ok
+    
+- name: Test snmp
+  shell: snmpwalk -v2c -c{{snmp_string}}  {{ ansible_fqdn }} system
+  tags: test_snmp
+
+
+

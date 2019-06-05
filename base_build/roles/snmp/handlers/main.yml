@@ -1,0 +1,8 @@
+---
+- name: restart snmpd
+  service: name=snmpd state=restarted enabled=true
+ 
+- name: restart iptables
+  service: name=iptables state=restarted enabled=true
+
+ 

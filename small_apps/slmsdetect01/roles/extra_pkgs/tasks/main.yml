@@ -1,0 +1,17 @@
+---
+- name: Add Oracle MySQL RPM channels
+  command: /usr/sbin/rhn-channel --add --channel=ucl-rhel6-x86_64-oracle-mysql --user={{ rhn_user }} --password={{ rhn_password }} 
+  
+- name: Install extra packages
+  yum: name={{ item }} state=installed disable_gpg_check=true
+  with_items:
+    - httpd
+    - mod_ssl
+    - mysql-community-server
+    - mysql-community-client 
+    - gnupg
+    - openssl
+    - php-pdo
+  notify:
+    - restart mysqld
+  tags: extra_pkgs_install

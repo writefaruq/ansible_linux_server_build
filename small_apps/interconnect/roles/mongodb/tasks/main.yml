@@ -1,0 +1,19 @@
+---
+# https://docs.mongodb.org/manual/tutorial/install-mongodb-on-red-hat/
+- name: Add MongoDB yum repo
+  yumrepo: 
+    name: mongodb-org-3.2
+    description: MongoDB Repository
+    baseurl: https://repo.mongodb.org/yum/redhat/$releasever/mongodb-org/3.2/x86_64/
+    gpgcheck: no
+
+- name: Install Mongodb
+  yum: name=mongodb-org state=present
+  notify:
+    - start mongod
+
+- name: Add SELinux dependencies
+  yum: name=policycoreutils-python state=present 
+
+- name: Configure SELinux
+  seport: ports=27017  proto=tcp setype=mongod_port_t state=present

@@ -1,0 +1,7 @@
+- hosts: target_host
+  become: yes
+  become_user: root
+  vars_files:
+   - host_vars/slmseyepathw01.ad-delegated.ucl.ac.uk.yaml    
+  roles:
+   - ssl_csr

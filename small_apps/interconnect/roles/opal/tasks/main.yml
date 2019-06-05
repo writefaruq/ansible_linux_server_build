@@ -1,0 +1,25 @@
+---
+- name: Add EPEL channel
+  command: /usr/sbin/rhn-channel --add --channel=ucl-rhel6-x86_64-epel --user={{ rhn_user }} --password={{ rhn_password }}
+
+- name: Add opal repo
+  yumrepo: 
+    name: obiba-stable
+    description: OBiBa Repository
+    baseurl: http://rpm.obiba.org/stable
+    gpgcheck: no
+
+- name: Install R
+  yum: name={{ item }} state=present disable_gpg_check=yes 
+  with_items:
+    - R
+  tags: r_install
+  ignore_errors: True
+
+- name: Install Opal and RServer (TODO: do with yum module)
+  command: yum install -y opal opal-server opal-rserver
+  notify:
+    - restart opal
+    - restart rserver
+  tags: opal_install
+

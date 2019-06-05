@@ -1,0 +1,13 @@
+---
+- name: start sssd
+  service: name=sssd state=started enabled=true
+  ignore_errors: True
+
+- name: start smb
+  service: name=smb state=started enabled=true
+  ignore_errors: True
+
+- name: start oddjobd
+  service: name=oddjobd state=started enabled=true
+  ignore_errors: True
+

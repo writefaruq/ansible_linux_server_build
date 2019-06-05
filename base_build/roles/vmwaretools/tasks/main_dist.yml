@@ -1,0 +1,40 @@
+---
+- name: Mount iso image (ensure the iso image is inserted from vSphere client)
+  mount: name=/mnt src=/dev/sr0 fstype=iso9660 opts=ro state=mounted
+  tags: vmtools
+  register: iso_mounted
+
+- name: Untar archive and run vmtools insatller
+  shell: cd /tmp && tar -zxf /mnt/{{ vmtools_archive }} && vmware-tools-distrib/vmware-install.pl -d
+  tags: vmtools
+  when: iso_mounted is defined
+  register: vmtools_installed
+
+- name: Copy vmtoolsd init script
+  copy: src=vmtoolsd.init dest=/etc/init.d/vmtoolsd mode=0750
+  tags: vmtools
+  register: init_script
+  when: vmtools_installed is defined
+
+- name: Enable vmtoolsd service
+  service: name=vmtoolsd state=running enabled=yes
+  tags: vmtools
+  when: init_script is defined
+
+- name: clean-up tmp files
+  file: name=/tmp/vmware-tools-distrib state=absent
+  tags:
+   - vmtools
+   - cleanup
+  when: vmtools_installed is defined
+
+- name: Unmount iso image
+  mount: name=/mnt src=/dev/sr0 fstype=iso9660 opts=ro state=unmounted
+  tags:
+   - vmtools
+   - cleanup
+
+- command: vmware-toolbox-cmd --version
+  tags:
+   - vmtools
+   - version-check

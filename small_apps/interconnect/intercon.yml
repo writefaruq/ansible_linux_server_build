@@ -1,0 +1,19 @@
+---
+- hosts: intercon
+  become: yes
+  become_user: root
+  vars_files:
+   - ../../ansible_works/group_vars/main.yml
+   - ../../ansible_works/vault/vault_vars.yml
+  #vars_prompt:
+  # - name: "rhn_user"
+  #   prompt: "Enter rhn user name"
+  #   private: yes 
+  # - name: "rhn_password"
+  #   prompt: "Enter rhn user pass"
+  #   private: yes 
+  roles:
+   #- java8
+   #- mongodb
+   #- opal
+   - httpd

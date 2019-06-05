@@ -1,0 +1,64 @@
+---
+- name: Install sssd packages
+  yum: name={{ item }} state=installed
+  with_items:
+   - sssd
+   - krb5-workstation
+   - samba
+   - samba-client
+   - samba-common
+   - oddjob-mkhomedir.x86_64
+  tags: sssd_install
+  register: sssd_installed
+
+- name: Copy the host file
+  template: src=hosts.j2 dest=/etc/hosts force=yes
+  tags: sssd_conf
+
+- name: Copy over the plain pam configuration files
+  copy: src={{ item }} dest=/etc/pam.d force=yes
+  with_items:
+   - system-auth
+   - password-auth
+  tags: sssd_conf
+
+- name: Copy the Kerberos conf file
+  template: src=krb5.conf.j2 dest=/etc/krb5.conf force=yes
+  tags: sssd_conf
+
+- name: Copy the Samba conf file
+  template: src=smb.conf.j2 dest=/etc/samba/smb.conf force=yes
+  tags: sssd_conf
+  notify:
+   - start smb
+
+- name: Copy the nsswitch conf file
+  copy: src=nsswitch.conf dest=/etc/nsswitch.conf force=yes
+  tags: sssd_conf
+
+- name: Copy the Sudoers conf file
+  template: src=sudoers.j2 dest=/etc/sudoers force=yes
+  tags: sssd_conf
+
+- name: Copy the allowed group conf file
+  template: src=login.group.allowed.j2 dest=/etc/login.group.allowed force=yes
+  tags: sssd_conf
+
+- name: Copy the SSSD conf file
+  template: src=sssd.conf.j2 dest=/etc/sssd/sssd.conf force=yes owner=root mode=600
+  tags: sssd_conf
+  notify:
+   - start sssd
+   - start oddjobd
+
+- name: Run the adjoin command
+  become_user: "{{ elevated_user }}"
+  shell: bash -lc 'net ads join createupn="{{ ldap_sasl_authid }}" createcomputer=\"{{ ad_create_computer }}\"   -U {{ elevated_user }}%{{ ad_user_pass }}'
+  tags: sssd_adjoin
+  #when: sssd_installed
+  register: sssd_ad_joined
+  ignore_errors: yes
+  notify:
+   - start sssd
+
+

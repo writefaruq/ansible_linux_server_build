@@ -1,0 +1,46 @@
+---
+- name: Add TSM client RPM channels
+  command: /usr/sbin/rhn-channel --add --channel=ucl-rhel6-x86_64-tsm --user={{ rhn_user }} --password={{ rhn_password }} 
+  
+- name: Install tsm client packages
+  yum: name={{ item }} state=installed disable_gpg_check=true
+  with_items:
+    - gskcrypt64 
+    - gskssl64
+    - TIVsm-API64 
+    - TIVsm-BA
+  notify:
+    - restart dsmcad
+  tags: tsm_config
+  register: tsm_client_installed
+ 
+- name: Copy the dsmcad init file
+  copy: src={{item.src}} dest={{item.dest}} force=yes mode=755
+  with_items:
+    - { src: 'dsmcad-centos', dest: '/etc/init.d/dsmcad'}
+    #- { src: 'dsmcad-paths.sh', dest: '/etc/profile.d/'}
+  tags: tsm_config
+  register: dsmcad_init_copied
+  when: tsm_client_installed
+
+
+- name: Create some necessary files/folders
+  file: path={{ item.path }} state={{ item.state }} owner=root mode=0755
+  with_items:
+    - { path: '/var/log/tsm', state: directory }
+    - { path: '/opt/tivoli/tsm/client/ba/bin', state: directory }
+    - { path: '/opt/tivoli/tsm/client/ba/bin/backup.inclexcl', state: touch }
+  tags: tsm_config
+  when: tsm_client_installed
+
+- name: Upload some necessary config files
+  template: src={{ item.src }} dest={{ item.dest }} owner=root mode=0755
+  with_items:
+    - { src: 'dsm.opt.j2', dest: '/opt/tivoli/tsm/client/ba/bin/dsm.opt' }
+    - { src: 'dsm.sys.j2', dest: '/opt/tivoli/tsm/client/ba/bin/dsm.sys' }
+  tags: tsm_config
+  when: tsm_client_installed
+  notify:
+    - restart dsmcad
+  
+    

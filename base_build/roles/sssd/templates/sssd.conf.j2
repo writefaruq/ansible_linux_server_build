@@ -1,0 +1,37 @@
+# This file is managed by Puppet.
+# Any changes you make to this file will be reverted on the next Puppet run.
+[sssd]
+debug_level = 2
+config_file_version = 2
+services = nss, pam
+domains = {{ domains }}
+
+[nss]
+debug_level = 2
+nss_filter_groups = root
+nss_filter_users = root
+nss_entry_cache_timeout = 30
+nss_enum_cache_timeout = 30
+override_homedir  = /home/%d/%u
+default_shell = /bin/bash
+allowed_shells =  /bin/bash,/bin/rbash,/bin/sh
+
+[pam]
+debug_level=2
+reconnection_retries = 3
+offline_credentials_expiration = 2
+offline_failed_login_attempts = 3
+offline_failed_login_delay = 5
+
+[domain/{{ smb_realm }}]
+debug_level = 5
+id_provider = ad
+auth_provider = ad
+ignore_group_members = true
+ldap_sasl_mech = GSSAPI
+ldap_sasl_authid = {{ ldap_sasl_authid }}
+ldap_idmap_range_min = 1824600000
+ldap_idmap_range_size = 2000000
+ldap_access_filter = {{ ldap_access_filter }}
+
+

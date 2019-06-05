@@ -1,0 +1,15 @@
+---
+- hosts: slmsdetect01
+  become: yes
+  become_user: root
+  vars:
+   - rhn_user: cceamof
+  vars_files:
+   - ../../ansible_works/host_vars/slmsdetect01.ad-delegated.ucl.ac.uk.yaml
+  vars_prompt:
+   - name: "rhn_password"
+     prompt: "Enter rhn user pass"
+     private: yes 
+  roles:
+   - extra_pkgs
+   

@@ -1,0 +1,8 @@
+---
+ntp_server: <PUT NTP SERVER FQDN>
+rhn_activationkey: "{{ vault_rhn_activationkey }}"
+elevated_user: <PUT ELEVATED USERNAME>
+admin_ad_group: <Admin AD group>
+#rhn_user: <rhn_user>
+#rhn_password: {{ vault_rhn_password }}
+

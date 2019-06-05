@@ -1,0 +1,8 @@
+---
+- name: restart vmtoolsd
+  service: name=vmtoolsd state=restarted
+  ignore_errors: True
+
+- name: restart vmware-tools-services
+  service: name=vmware-tools-services state=restarted
+  ignore_errors: True

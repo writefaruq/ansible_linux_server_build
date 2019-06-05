@@ -1,0 +1,8 @@
+---
+- name: restart rserver
+  service: name=rserver state=restarted enabled=true
+  ignore_errors: True
+
+- name: restart opal
+  service: name=opal state=restarted enabled=true
+  ignore_errors: True

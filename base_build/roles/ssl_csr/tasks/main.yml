@@ -1,0 +1,21 @@
+---
+  - name: Ensure csr directorty is present
+    file:  path={{ csr_path }} state=directory
+  
+  - name: Check the integrity of private key
+    command: openssl rsa -in {{ private_key_path }} -check  
+    
+  - name: Upload CSR config file
+    template: src=csr_settings.cnf dest="{{ csr_path }}/{{ ansible_hostname }}.cnf"
+     
+  - name: Generate CSR
+    command: openssl req -new -out "{{ ansible_hostname  }}.csr" -key  {{ private_key_path }} -config "{{ ansible_hostname }}.cnf"
+    args:
+      chdir: "{{ csr_path }}"
+      creates: "{{ ansible_hostname  }}.csr"
+
+  - name: Verify CSR
+    command: openssl req -text -noout -verify -in "{{ ansible_hostname  }}.csr"
+    args:
+      chdir: "{{ csr_path }}"
+

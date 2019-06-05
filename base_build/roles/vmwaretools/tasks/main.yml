@@ -1,0 +1,10 @@
+---
+- name: Add VMWare Tools RPM channels
+  command: /usr/sbin/rhn-channel --add --channel=vmwaretools-5-0-u2 --user={{ rhn_user }} --password={{ rhn_password }} 
+  
+- name: Install extra packages
+  yum: name={{ item }} state=installed disable_gpg_check=true
+  with_items:
+    - vmware-tools-services.x86_64
+  notify:
+    - restart vmware-tools-services

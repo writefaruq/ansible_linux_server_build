@@ -1,0 +1,16 @@
+---
+- name: Copy over the NTP configuration
+  template: src=ntp.conf.j2 dest=/etc/ntp.conf
+  notify:
+    - restart ntp
+  tags: ntp
+  register: ntp_up
+
+- name: Make sure NTP looks fine
+  command: ntpq -p
+  tags: ntp
+  when: ntp_up != 0
+
+- name: restart ntp
+  service: name=ntpd state=restarted
+  ignore_errors: True

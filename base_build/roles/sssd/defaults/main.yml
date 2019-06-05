@@ -1,0 +1,12 @@
+---
+domains: <PUT domain1>
+ldap_sasl_authid: "HOST/{{ host_short_name }}.<somewhere>.ac.uk@<SOMEWHERE>.AC.UK" 
+ldap_domain: <PUT domain1>
+smb_realm: <SOMEWHERE>.AC.UK
+smb_workgroup: <SOMEWORKGROUP>
+host_short_name: "{{ host_short_name }}" 
+host_fqdn: "{{ host_short_name }}.<somewhere>.ucl.ac.uk"
+login_group_allowed: "{{ ad_admin_group }}"
+sudoers: "{{ ad_admin_group }}"
+domain_realm: <somewhere.ac.uk>
+

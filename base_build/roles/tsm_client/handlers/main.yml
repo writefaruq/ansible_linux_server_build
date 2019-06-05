@@ -1,0 +1,3 @@
+---
+- name: restart dsmcad
+  service: name=dsmcad state=restarted enabled=true
